@@ -72,7 +72,7 @@ func convertFromFahrToKelvin(_ fahr: Double) -> Double {
 }
 
 func convertFromKelvinToCelsius(_ kelvin: Double) -> Double {
-    
+    0
 }
 
 func convertFromKelvinToFahr(_ kelvin: Double) -> Double {

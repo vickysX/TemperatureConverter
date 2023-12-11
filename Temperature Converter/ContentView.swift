@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @FocusState private var inputIsFocused
+    @FocusState private var inputIsFocused: Bool
     
     @State private var inputTemperature: Double = 0.0
     @State private var selectedMeasureUnit: MeasureUnit = .celsius
@@ -34,49 +34,76 @@ struct ContentView: View {
         }
     }
     
-    
     var body: some View {
         NavigationStack {
             Form {
-                Section {
-                    
+                Section("Enter input temperature") {
+                    Picker("Choose input measure unit", selection: $selectedMeasureUnit) {
+                        ForEach(MeasureUnit.allCases, id: \.self) {
+                            Text($0.rawValue)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    TextField("Temperature", value: $inputTemperature, format: .number)
+                        .keyboardType(.decimalPad)
+                        .focused($inputIsFocused)
+                }
+                Section("Select conversion measure unit") {
+                    Picker("Select conversion measure unit", selection: $selectedConversionMeasureunit) {
+                        ForEach(MeasureUnit.allCases, id: \.self) {
+                            Text($0.rawValue)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                }
+                Section("Result") {
+                    Text(result.formatted())
                 }
             }
             .navigationTitle("Temperature Converter")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                if inputIsFocused {
+                    Button("Done") {
+                        inputIsFocused = false
+                    }
+                }
+            }
         }
     }
 }
 
 // Retrieve raw values with .rawValue property
-enum MeasureUnit: String {
+// It's conforming to the CaseIterable protocol
+// so that I can use it inside a Picker
+enum MeasureUnit: String, CaseIterable {
     case celsius = "°C"
     case fahrenheit = "°F"
     case kelvin = "K"
 }
 
 func convertFromCelsiusToFahr(_ celsius: Double) -> Double {
-    0
+    convertFromKelvinToFahr(convertFromCelsiusToKelvin(celsius))
 }
 
 func convertFromCelsiusToKelvin(_ celsius: Double) -> Double {
-    0
+    celsius + 273.15
 }
 
 func convertFromFahrToCelsius(_ fahr: Double) -> Double {
-    0
+    convertFromKelvinToCelsius(convertFromFahrToKelvin(fahr))
 }
 
 func convertFromFahrToKelvin(_ fahr: Double) -> Double {
-    0
+    fahr + 255.372
 }
 
 func convertFromKelvinToCelsius(_ kelvin: Double) -> Double {
-    0
+    kelvin - 273.15
 }
 
 func convertFromKelvinToFahr(_ kelvin: Double) -> Double {
-    0
+    kelvin - 255.372
 }
 
 #Preview {
